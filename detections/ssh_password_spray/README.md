@@ -35,21 +35,6 @@ SSH Success (5715)
 
 
 
-## Repo Structure
-
-```
-.
-├── rules/
-│   └── local_rules.xml          # Final Wazuh ruleset (heavily commented)
-├── docs/
-│   ├── detection.md             # Full detection specification (14 sections)
-│   └── rule_evolution.md        # Iterative changelog — every bug and fix
-├── fuzzer/
-│   └── fuzzer.go                # Golang SSH spray simulation tool
-└── README.md
-```
-
----
 
 ## Lab Setup
 
@@ -134,15 +119,8 @@ Wazuh 4.x uses `<same_srcip />`. The old tag may silently fail.
 
 ## Detection Spec
 
-Full 14-section detection specification including MITRE mapping, log requirements, threshold rationale, false positive analysis, and response guidance: [`docs/detection.md`](docs/detection.md)
+Full 14-section detection specification including MITRE mapping, log requirements, threshold rationale, false positive analysis, and response guidance: [`detection.md`](detection.md)
 
-Full iterative changelog of every bug, fix, and design decision: [`docs/rule_evolution.md`](docs/rule_evolution.md)
+Full iterative changelog of every bug, fix, and design decision: [`rule_evolution.md`](rule_evolution.md)
 
 
-## v2 Roadmap
-
-- [ ] Cross-host spray correlation (same IP → multiple agents)
-- [ ] Privileged account targeting flag (root/admin/svc_*)
-- [ ] Threat intel IP enrichment (AbuseIPDB integration)
-- [ ] Wazuh active response: auto-block `srcip` on level 15 trigger
-- [ ] GeoIP tiering: external spray = higher severity
