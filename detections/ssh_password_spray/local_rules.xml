@@ -1,0 +1,50 @@
+<group name="syslog,sshd,custom_spray,">
+
+  <!-- 100100: Tag SSH auth failures (Failed password line only) -->
+  <rule id="100100" level="3">
+    <if_sid>5710,5716</if_sid>
+    <description>SSH authentication failure - tagged for spray correlation</description>
+    <group>authentication_failure,ssh_spray_candidate,</group>
+  </rule>
+
+  <!-- 100101: Spray detection - 6 distinct users from same IP within 600s -->
+  <rule id="100101" level="12" frequency="6" timeframe="600" ignore="300">
+    <if_matched_sid>100100</if_matched_sid>
+    <same_srcip />
+    <different_user />
+    <description>Possible SSH password spray: $(srcip) attempted login against 6+ distinct users within 10 mins</description>
+    <mitre>
+      <id>T1110.003</id>
+    </mitre>
+    <group>authentication_failures,password_spray,attack,</group>
+  </rule>
+
+  <!-- 100102: Suppress re-fires from same IP within suppression window -->
+  <rule id="100102" level="0" timeframe="600">
+    <if_matched_sid>100101</if_matched_sid>
+    <same_srcip />
+    <description>Suppressing duplicate spray alert from same source IP</description>
+    <options>no_log</options>
+  </rule>
+
+  <!-- 100103: Tag successful SSH logins for post-spray correlation -->
+  <!--<rule id="100103" level="3">-->
+  <!--  <if_sid>5715</if_sid>-->
+  <!--  <description>SSH successful login - tagged for post-spray escalation</description>-->
+  <!--  <group>authentication_success,ssh_success_candidate,</group>-->
+  <!--</rule>-->
+
+  <!-- 100104: Tag 100101 firing as spray-confirmed -->
+<rule id="100104" level="15" timeframe="300" ignore="300">
+  <if_matched_sid>100101</if_matched_sid>
+  <if_sid>5501</if_sid>
+  <!--<same_srcip />-->
+  <description>CRITICAL: SSH password spray followed by successful login!</description>
+  <mitre>
+    <id>T1110.003</id>
+    <id>T1078</id>
+  </mitre>
+  <group>password_spray,credential_access,attack,critical,</group>
+</rule>
+
+</group>
